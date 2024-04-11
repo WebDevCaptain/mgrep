@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"bufio"
 )
 
 type Result struct {
