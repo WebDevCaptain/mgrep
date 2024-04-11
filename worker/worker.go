@@ -1,10 +1,10 @@
 package worker
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strings"
-	"bufio"
 )
 
 type Result struct {

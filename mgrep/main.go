@@ -45,7 +45,7 @@ func main() {
 
 	numWorkers := 10
 	workersWg.Add(1)
-	
+
 	go func() {
 		defer workersWg.Done()
 
@@ -82,6 +82,7 @@ func main() {
 	go func() {
 		workersWg.Wait()
 		close(blockWorkersWg)
+		// fmt.Println("closed blockWorkersWg")
 	}()
 
 	var displayWg sync.WaitGroup
@@ -91,11 +92,19 @@ func main() {
 		select {
 		case r := <-results:
 			fmt.Printf("%v[%v]:%v\n", r.Path, r.LineNum, r.Line)
-		case <-blockWorkersWg:
-			if len(results) == 0 {
-				displayWg.Done()
-				return
+
+		case _, ok := <-blockWorkersWg:
+			// fmt.Println("blockWorkersWg closed", len(results))
+
+			if !ok {
+				// fmt.Println("blockWorkersWg closed", len(results))
+
+				if len(results) == 0 {
+					displayWg.Done()
+					return
+				}
 			}
+
 		}
 	}()
 
